@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advantage Power BI Report</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 50px;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        #header {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        #header img {
+            width: 50px; 
+            height: auto;
+            margin-right: 15px; 
+        }
+        h2 {
+            color: #a30311;
+            font-size: 2.5em;
+            margin: 0; 
+        }
+        p {
+            font-size: 1.2em;
+            margin-bottom: 30px; /* Aumentado para mayor separación */
+        }
+        input[type="password"] {
+            padding: 10px;
+            font-size: 1.1em;
+            width: 250px;
+            margin-right: 10px;
+            margin-bottom: 20px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 1.1em;
+            background-color: #a30311;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        button:hover {
+            background-color: #73020c;
+        }
+        #report {
+            display: none;
+            margin-top: 20px;
+        }
+        iframe {
+            width: 53% !important;
+            height: 600px;
+            border: 1px solid #ccc;
+        }
+    </style>
+</head>
+<body>
+    
+    <div id="header">
+        <img src="https://w7.pngwing.com/pngs/733/284/png-transparent-red-bull-energy-drink-drawing-logo-red-bull-food-text-carnivoran-thumbnail.png" alt="Redbull Logo">
+        <h2>Reporte de Red bull</h2>
+    </div>
+
+    <p>A continuación, podrás visualizar el reporte colocando la contraseña correcta:</p>
+
+    <input type="password" id="password" placeholder="Aquí coloca la contraseña">
+    <button onclick="checkPassword()">Acceder</button>
+    
+    <div id="report"></div>
+
+    <script>
+        function decryptBase64(encodedString) {
+            return atob(encodedString); 
+        }
+
+        async function checkPassword() {
+            const inputPassword = document.getElementById('password').value;
+
+            try {
+                const response = await fetch('password.json');
+                const data = await response.json();
+                
+                const correctPassword = decryptBase64(data.encryptedPassword);
+
+                if (inputPassword === correctPassword) {
+                    const reportResponse = await fetch('config.json');
+                    const reportData = await reportResponse.json();
+                    const reportUrl = decryptBase64(reportData.encryptedUrl);
+
+                    const reportDiv = document.getElementById('report');
+                    reportDiv.innerHTML = `<iframe title="RedBull_informe" src="${reportUrl}" frameborder="0" allowFullScreen="true" style="width: 60%; height: 600px;"></iframe>`;
+                    reportDiv.style.display = 'block';
+                } else {
+                    alert('Contraseña incorrecta. Intenta de nuevo.');
+                }
+            } catch (error) {
+                console.error('Error al cargar la contraseña o el informe:', error);
+            }
+        }
+    </script>
+</body>
+</html>
